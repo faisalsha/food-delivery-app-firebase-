@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:fooddelivery/Pages/SignUp/Components/signup_auth_provider.dart';
 import 'package:fooddelivery/Widgets/mybutton.dart';
+import 'package:provider/provider.dart';
 
 class SignUp extends StatefulWidget {
   const SignUp({Key? key}) : super(key: key);
@@ -9,9 +11,15 @@ class SignUp extends StatefulWidget {
 }
 
 class _SignUpState extends State<SignUp> {
-  bool isVisible = false;
+  TextEditingController nameController = TextEditingController();
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
+
+  bool isVisible = true;
   @override
   Widget build(BuildContext context) {
+    SignupAuthProvider signupAuthProvider =
+        Provider.of<SignupAuthProvider>(context);
     return Scaffold(
       body: SafeArea(
         child: Padding(
@@ -29,30 +37,42 @@ class _SignUpState extends State<SignUp> {
               Column(
                 children: [
                   TextFormField(
+                    controller: nameController,
                     decoration: InputDecoration(
                       hintText: "Enter Name",
                     ),
                   ),
                   TextFormField(
+                    controller: emailController,
                     decoration: InputDecoration(hintText: "Enter Email"),
                   ),
                   TextFormField(
-                      obscureText: isVisible,
-                      decoration: InputDecoration(
-                          hintText: "Enter Password",
-                          suffixIcon: IconButton(
-                              onPressed: () {
-                                setState(() {
-                                  isVisible = !isVisible;
-                                });
-                              },
-                              icon: Icon(isVisible
-                                  ? Icons.visibility
-                                  : Icons.visibility_off))))
+                    obscureText: isVisible,
+                    controller: passwordController,
+                    decoration: InputDecoration(
+                      hintText: "Enter Password",
+                      suffixIcon: IconButton(
+                        onPressed: () {
+                          setState(() {
+                            isVisible = !isVisible;
+                          });
+                        },
+                        icon: Icon(isVisible
+                            ? Icons.visibility
+                            : Icons.visibility_off),
+                      ),
+                    ),
+                  ),
                 ],
               ),
               MyButton(
-                onpressed: () {},
+                onpressed: () {
+                  signupAuthProvider.signupVaidation(
+                      fullName: nameController,
+                      emailAdress: emailController,
+                      password: passwordController,
+                      context: context);
+                },
                 text: "SignUp",
               ),
               Row(
