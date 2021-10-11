@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fooddelivery/Pages/LoginScreen/Components/login_auth_provider.dart';
 import 'package:fooddelivery/Pages/SignUp/Components/signup_auth_provider.dart';
 import 'package:fooddelivery/Pages/Welcome/welcome_page.dart';
 import 'package:provider/provider.dart';
@@ -19,6 +20,9 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(
           create: (context) => SignupAuthProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => LoginProvider(),
         )
       ],
       child: MaterialApp(
