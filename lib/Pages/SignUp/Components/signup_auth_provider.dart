@@ -1,26 +1,17 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:fooddelivery/Pages/HomeScreen/hom_screen.dart';
 
 class SignupAuthProvider with ChangeNotifier {
   static Pattern pattern =
       r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
 
   RegExp regExp = RegExp(SignupAuthProvider.pattern.toString());
-  // void signUpValidate(
-  //     {required TextEditingController name,
-  //     required TextEditingController email,
-  //     required TextEditingController password,
-  //     required BuildContext context}) async {
-  //   if (name.text.isEmpty) {
-  //     ScaffoldMessenger.of(context)
-  //         .showSnackBar(SnackBar(content: Text("Please provide name")));
-  //     return;
-  //   } else if (password.text.trim().toString().isEmpty) {
-  //     ScaffoldMessenger.of(context)
-  //         .showSnackBar(SnackBar(content: Text("Password is empty")));
-  //     return;
-  //   }
-  // }
+
+  UserCredential? userCredential;
+  bool loading = false;
 
   void signupVaidation(
       {required TextEditingController? fullName,
@@ -62,6 +53,49 @@ class SignupAuthProvider with ChangeNotifier {
         ),
       );
       return;
-    } else {}
+    } else {
+      try {
+        loading = true;
+        notifyListeners();
+        userCredential = await FirebaseAuth.instance
+            .createUserWithEmailAndPassword(
+                email: emailAdress.text, password: password.text);
+        loading = true;
+        notifyListeners();
+
+        FirebaseFirestore.instance
+            .collection("users")
+            .doc(userCredential!.user!.uid)
+            .set({
+          "fullName": fullName.text,
+          "emailAddress": emailAdress.text,
+          "password": password.text,
+          "userUid": userCredential!.user!.uid
+        }).then((value) {
+          loading = false;
+          notifyListeners();
+          Navigator.pushReplacement(context,
+              MaterialPageRoute(builder: (context) {
+            return HomeScreen();
+          }));
+        });
+      } on FirebaseAuthException catch (e) {
+        loading = false;
+        notifyListeners();
+        if (e.code == "weak-password") {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text("weak-password"),
+            ),
+          );
+        } else if (e.code == 'email-already-in-use') {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text("email-already-in-use"),
+            ),
+          );
+        }
+      }
+    }
   }
 }

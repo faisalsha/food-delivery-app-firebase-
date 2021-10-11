@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fooddelivery/Pages/LoginScreen/login_screen.dart';
 import 'package:fooddelivery/Pages/SignUp/Components/signup_auth_provider.dart';
 import 'package:fooddelivery/Widgets/mybutton.dart';
 import 'package:provider/provider.dart';
@@ -65,16 +66,20 @@ class _SignUpState extends State<SignUp> {
                   ),
                 ],
               ),
-              MyButton(
-                onpressed: () {
-                  signupAuthProvider.signupVaidation(
-                      fullName: nameController,
-                      emailAdress: emailController,
-                      password: passwordController,
-                      context: context);
-                },
-                text: "SignUp",
-              ),
+              signupAuthProvider.loading == false
+                  ? MyButton(
+                      onpressed: () {
+                        signupAuthProvider.signupVaidation(
+                            fullName: nameController,
+                            emailAdress: emailController,
+                            password: passwordController,
+                            context: context);
+                      },
+                      text: "SignUp",
+                    )
+                  : Center(
+                      child: CircularProgressIndicator(),
+                    ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -85,9 +90,17 @@ class _SignUpState extends State<SignUp> {
                   SizedBox(
                     width: 10,
                   ),
-                  Text(
-                    "Login",
-                    style: TextStyle(fontSize: 16),
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) {
+                        return LoginScreen();
+                      }));
+                    },
+                    child: Text(
+                      "Login",
+                      style: TextStyle(fontSize: 16),
+                    ),
                   )
                 ],
               )
