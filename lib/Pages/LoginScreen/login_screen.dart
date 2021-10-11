@@ -40,6 +40,7 @@ class _LoginScreenState extends State<LoginScreen> {
               icon: Icon(isLoading ? Icons.visibility_off : Icons.visibility),
             ),
             BottomPartForLogin(
+              isLoading: loginAuthProvider.loading,
               onpressed: () {
                 loginAuthProvider.loginVaidation(
                     emailAdress: Email, password: Password, context: context);

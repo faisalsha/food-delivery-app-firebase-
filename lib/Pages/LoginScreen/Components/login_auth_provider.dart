@@ -1,5 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:fooddelivery/Pages/HomeScreen/hom_screen.dart';
 
 class LoginProvider with ChangeNotifier {
   static Pattern pattern =
@@ -8,6 +10,8 @@ class LoginProvider with ChangeNotifier {
   RegExp regExp = RegExp(LoginProvider.pattern.toString());
 
   bool loading = false;
+
+  UserCredential? userCredential;
 
   void loginVaidation(
       {required TextEditingController? emailAdress,
@@ -41,6 +45,37 @@ class LoginProvider with ChangeNotifier {
         ),
       );
       return;
-    } else {}
+    } else {
+      try {
+        loading = true;
+        notifyListeners();
+        userCredential = await FirebaseAuth.instance
+            .signInWithEmailAndPassword(
+                email: emailAdress.text, password: password.text)
+            .then((value) async {
+          loading = false;
+          notifyListeners();
+          await Navigator.push(context, MaterialPageRoute(builder: (context) {
+            return HomeScreen();
+          }));
+        });
+      } on FirebaseAuthException catch (e) {
+        loading = false;
+        notifyListeners();
+        if (e.code == "user-not-found") {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text("user-not-found"),
+            ),
+          );
+        } else if (e.code == "wrong-password") {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text("wrong-password"),
+            ),
+          );
+        }
+      }
+    }
   }
 }
