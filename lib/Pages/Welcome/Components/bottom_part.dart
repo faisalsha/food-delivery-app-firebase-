@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:fooddelivery/Pages/SignUp/signup.dart';
+import 'package:fooddelivery/Widgets/mybutton.dart';
 
 class BottomPart extends StatelessWidget {
   const BottomPart({Key? key}) : super(key: key);
@@ -7,28 +9,9 @@ class BottomPart extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        MaterialButton(
-          onPressed: () {},
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
-          child: Ink(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                  colors: [Colors.green, Colors.green.shade400],
-                  begin: Alignment.centerLeft,
-                  end: Alignment.centerRight),
-            ),
-            child: Container(
-              height: 50,
-              alignment: Alignment.center,
-              child: Text(
-                "Login",
-                style: TextStyle(
-                    fontWeight: FontWeight.w500,
-                    fontSize: 24,
-                    color: Colors.white),
-              ),
-            ),
-          ),
+        MyButton(
+          onpressed: () {},
+          text: "Login",
         ),
         SizedBox(
           height: 20,
@@ -36,6 +19,9 @@ class BottomPart extends StatelessWidget {
         GestureDetector(
           onTap: () {
             print("pressed");
+            Navigator.push(context, MaterialPageRoute(builder: (context) {
+              return SignUp();
+            }));
           },
           child: Text(
             "Sign-Up",
