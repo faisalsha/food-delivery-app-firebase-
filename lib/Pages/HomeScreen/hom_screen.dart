@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fooddelivery/Widgets/app_drawer.dart';
 import 'package:fooddelivery/models/user_model.dart';
+import 'package:shimmer/shimmer.dart';
 
 late UserModel userModel;
 
@@ -100,10 +101,45 @@ class HomeScreen extends StatelessWidget {
                     }),
                   ),
                 );
-              } else {
-                return Center(
-                  child: CircularProgressIndicator(),
+              } else if (!streamsnapshot.hasData) {
+                return Text("No data found");
+              } else if (streamsnapshot.connectionState ==
+                  ConnectionState.waiting) {
+                return SizedBox(
+                  width: 200.0,
+                  height: 100.0,
+                  child: Shimmer.fromColors(
+                    baseColor: Colors.purple.shade300,
+                    highlightColor: Colors.purple,
+                    child: Text(
+                      'Shimmer',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 40.0,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
                 );
+              } else {
+                // return SizedBox(
+                //   width: 200.0,
+                //   height: 100.0,
+                //   child: Shimmer.fromColors(
+                //     baseColor: Colors.purple.shade300,
+                //     highlightColor: Colors.purple,
+                //     child: Text(
+                //       'Shimmer',
+                //       textAlign: TextAlign.center,
+                //       style: TextStyle(
+                //         fontSize: 40.0,
+                //         fontWeight: FontWeight.bold,
+                //       ),
+                //     ),
+                //   ),
+                // );
+
+                return CircularProgressIndicator();
               }
             },
           ),

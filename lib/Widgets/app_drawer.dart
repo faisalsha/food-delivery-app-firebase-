@@ -18,7 +18,7 @@ class AppDrawer extends StatelessWidget {
               // radius: 10,
               backgroundImage: AssetImage("assets/images/profile.jpg"),
             ),
-            decoration: BoxDecoration(color: Color(0xff9A918F)),
+            decoration: BoxDecoration(color: Colors.purple[100]),
             accountName: Text(
               userModel.fullName,
               style: TextStyle(
