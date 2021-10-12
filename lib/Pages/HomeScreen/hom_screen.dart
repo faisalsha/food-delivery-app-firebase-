@@ -80,16 +80,32 @@ class HomeScreen extends StatelessWidget {
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
             ),
           ),
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              children: [
-                Categories(
-                    categoryName: "Food", image: "assets/images/log.png"),
-                Categories(
-                    categoryName: "Drinks", image: "assets/images/food.jpg")
-              ],
-            ),
+          StreamBuilder(
+            stream:
+                FirebaseFirestore.instance.collection("categories").snapshots(),
+            builder: (context, AsyncSnapshot<QuerySnapshot> streamsnapshot) {
+              if (streamsnapshot.hasData) {
+                return SingleChildScrollView(
+                  physics: BouncingScrollPhysics(),
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    children: List.generate(streamsnapshot.data!.docs.length,
+                        (index) {
+                      return Categories(
+                        categoryName: streamsnapshot.data!.docs[index]
+                            ['categoryName'],
+                        image: streamsnapshot.data!.docs[index]
+                            ['categoryImage'],
+                      );
+                    }),
+                  ),
+                );
+              } else {
+                return Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
+            },
           ),
           SizedBox(
             height: 10,
@@ -181,17 +197,17 @@ class Categories extends StatelessWidget {
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 15, vertical: 20),
       alignment: Alignment.center,
-      height: 120,
+      height: 130,
       width: 220,
       decoration: BoxDecoration(
-        image: DecorationImage(image: AssetImage(image), fit: BoxFit.cover),
+        image: DecorationImage(image: NetworkImage(image), fit: BoxFit.cover),
         // color: Colors.red,
         borderRadius: BorderRadius.circular(20),
       ),
       child: Text(
         categoryName.toString(),
         style: TextStyle(
-            color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
+            color: Colors.white, fontSize: 30, fontWeight: FontWeight.bold),
       ),
     );
   }
