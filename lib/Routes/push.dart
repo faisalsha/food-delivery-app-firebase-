@@ -7,4 +7,12 @@ class RoutingPage {
       return page;
     }));
   }
+
+  static pushReplacement(
+      {required BuildContext context, required Widget page}) {
+    return Navigator.of(context)
+        .pushReplacement(MaterialPageRoute(builder: (context) {
+      return page;
+    }));
+  }
 }
