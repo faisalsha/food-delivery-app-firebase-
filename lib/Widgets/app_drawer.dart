@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:fooddelivery/Pages/HomeScreen/hom_screen.dart';
 import 'package:fooddelivery/Pages/LoginScreen/login_screen.dart';
 
 class AppDrawer extends StatelessWidget {
@@ -11,12 +12,25 @@ class AppDrawer extends StatelessWidget {
       child: ListView(
         children: [
           UserAccountsDrawerHeader(
-            currentAccountPicture: ClipRRect(
-                borderRadius: BorderRadius.circular(20),
-                child: Image.asset("assets/images/food.jpg")),
-            decoration: BoxDecoration(color: Colors.green),
-            accountName: Text("Sha Faisal"),
-            accountEmail: Text("faisalsha64@gmail.com"),
+            currentAccountPicture: CircleAvatar(
+              // radius: 10,
+              backgroundImage: AssetImage("assets/images/profile.jpg"),
+            ),
+            decoration: BoxDecoration(color: Color(0xff9A918F)),
+            accountName: Text(
+              userModel.fullName,
+              style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 18,
+                  fontWeight: FontWeight.w500),
+            ),
+            accountEmail: Text(
+              userModel.emailAddress,
+              style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 18,
+                  fontWeight: FontWeight.w500),
+            ),
           ),
           ListTile(
             onTap: () {

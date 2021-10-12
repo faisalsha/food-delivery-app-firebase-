@@ -1,11 +1,32 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fooddelivery/Widgets/app_drawer.dart';
+import 'package:fooddelivery/models/user_model.dart';
+
+late UserModel userModel;
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({Key? key}) : super(key: key);
 
+  Future getUserDataFromFirebase() async {
+    //reach out to users table search and return us current user details
+    await FirebaseFirestore.instance
+        .collection("users")
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .get()
+        .then((DocumentSnapshot documentSnapshot) {
+      if (documentSnapshot.exists) {
+        userModel = UserModel.fromDocument(documentSnapshot);
+      } else {
+        print("document does not exists");
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    getUserDataFromFirebase();
     return Scaffold(
       drawer: AppDrawer(),
       appBar: AppBar(
