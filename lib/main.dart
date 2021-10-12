@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fooddelivery/Pages/HomeScreen/hom_screen.dart';
 import 'package:fooddelivery/Pages/LoginScreen/Components/login_auth_provider.dart';
 import 'package:fooddelivery/Pages/SignUp/Components/signup_auth_provider.dart';
 import 'package:fooddelivery/Pages/Welcome/welcome_page.dart';
@@ -41,7 +42,18 @@ class MyApp extends StatelessWidget {
             // is not restarted.
             primarySwatch: Colors.blue,
           ),
-          home: WelcomeScreen()),
+          home: StreamBuilder(
+            stream: FirebaseAuth.instance.authStateChanges(),
+            builder: (context, usersnapshot) {
+              if (usersnapshot.hasData) {
+                return HomeScreen();
+              } else {
+                return WelcomeScreen();
+              }
+            },
+          )
+          // home: WelcomeScreen(),
+          ),
     );
   }
 }

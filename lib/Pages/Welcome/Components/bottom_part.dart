@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:fooddelivery/Pages/LoginScreen/login_screen.dart';
 import 'package:fooddelivery/Pages/SignUp/signup.dart';
+import 'package:fooddelivery/Routes/push.dart';
 import 'package:fooddelivery/Widgets/mybutton.dart';
 
 class BottomPart extends StatelessWidget {
@@ -10,7 +12,9 @@ class BottomPart extends StatelessWidget {
     return Column(
       children: [
         MyButton(
-          onpressed: () {},
+          onpressed: () {
+            RoutingPage.push(context: context, page: LoginScreen());
+          },
           text: "Login",
         ),
         SizedBox(
@@ -19,9 +23,7 @@ class BottomPart extends StatelessWidget {
         GestureDetector(
           onTap: () {
             print("pressed");
-            Navigator.push(context, MaterialPageRoute(builder: (context) {
-              return SignUp();
-            }));
+            RoutingPage.push(context: context, page: SignUp());
           },
           child: Text(
             "Sign-Up",
