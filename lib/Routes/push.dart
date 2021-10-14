@@ -15,4 +15,8 @@ class RoutingPage {
       return page;
     }));
   }
+
+  static pop({required BuildContext context}) {
+    return Navigator.pop(context);
+  }
 }

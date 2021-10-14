@@ -1,7 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:fooddelivery/Routes/push.dart';
 import 'package:fooddelivery/Widgets/app_drawer.dart';
+import 'package:fooddelivery/Widgets/grid_view_widget.dart';
+import 'package:fooddelivery/Widgets/products.dart';
 import 'package:fooddelivery/models/user_model.dart';
 import 'package:shimmer/shimmer.dart';
 
@@ -97,6 +100,15 @@ class HomeScreen extends StatelessWidget {
                             ['categoryName'],
                         image: streamsnapshot.data!.docs[index]
                             ['categoryImage'],
+                        onTap: () {
+                          RoutingPage.push(
+                              context: context,
+                              page: GridViewWidget(
+                                id: streamsnapshot.data!.docs[index].id,
+                                collection: streamsnapshot.data!.docs[index]
+                                    ['categoryName'],
+                              ));
+                        },
                       );
                     }),
                   ),
@@ -153,14 +165,87 @@ class HomeScreen extends StatelessWidget {
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
             ),
           ),
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              children: [Products(), Products()],
-            ),
-          ),
           SizedBox(
             height: 10,
+          ),
+          //products section below
+          StreamBuilder(
+            stream:
+                FirebaseFirestore.instance.collection("products").snapshots(),
+            builder: (context, AsyncSnapshot<QuerySnapshot> streamsnapshot) {
+              if (streamsnapshot.hasData) {
+                return SingleChildScrollView(
+                  physics: BouncingScrollPhysics(),
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    children: List.generate(streamsnapshot.data!.docs.length,
+                        (index) {
+                      var data = streamsnapshot.data!.docs[index];
+                      return Products(
+                          price: data['productPrice'],
+                          productImage: data['productImage'],
+                          productName: data['productName']);
+                      // return Categories(
+                      //   categoryName: streamsnapshot.data!.docs[index]
+                      //       ['categoryName'],
+                      //   image: streamsnapshot.data!.docs[index]
+                      //       ['categoryImage'],
+                      //   onTap: () {
+                      //     RoutingPage.push(
+                      //         context: context,
+                      //         page: GridViewWidget(
+                      //           id: streamsnapshot.data!.docs[index].id,
+                      //           collection: streamsnapshot.data!.docs[index]
+                      //               ['categoryName'],
+                      //         ));
+                    }),
+                  ),
+                );
+              } else if (!streamsnapshot.hasData) {
+                return Text("No data found");
+              } else if (streamsnapshot.connectionState ==
+                  ConnectionState.waiting) {
+                return SizedBox(
+                  width: 200.0,
+                  height: 100.0,
+                  child: Shimmer.fromColors(
+                    baseColor: Colors.purple.shade300,
+                    highlightColor: Colors.purple,
+                    child: Text(
+                      'Shimmer',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 40.0,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                );
+              } else {
+                // return SizedBox(
+                //   width: 200.0,
+                //   height: 100.0,
+                //   child: Shimmer.fromColors(
+                //     baseColor: Colors.purple.shade300,
+                //     highlightColor: Colors.purple,
+                //     child: Text(
+                //       'Shimmer',
+                //       textAlign: TextAlign.center,
+                //       style: TextStyle(
+                //         fontSize: 40.0,
+                //         fontWeight: FontWeight.bold,
+                //       ),
+                //     ),
+                //   ),
+                // );
+
+                return CircularProgressIndicator();
+              }
+            },
+          ),
+
+          SizedBox(
+            height: 15,
           ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 15),
@@ -169,53 +254,15 @@ class HomeScreen extends StatelessWidget {
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
             ),
           ),
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              children: [Products(), Products()],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class Products extends StatelessWidget {
-  const Products({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.symmetric(horizontal: 15, vertical: 15),
-      // height: 380,
-      width: 200,
-      // color: Colors.red,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            height: 230,
-            width: 200,
-            decoration: BoxDecoration(
-              color: Colors.grey,
-              borderRadius: BorderRadius.circular(20),
-            ),
-          ),
           SizedBox(
-            height: 8,
-          ),
-          Text(
-            " Price",
-            style: TextStyle(color: Colors.black, fontSize: 18),
-          ),
-          SizedBox(
-            height: 5,
-          ),
-          Text(
-            " Product name",
-            style: TextStyle(color: Colors.black, fontSize: 18),
+            height: 100,
           )
+          // SingleChildScrollView(
+          //   scrollDirection: Axis.horizontal,
+          //   child: Row(
+          //       // children: [Products(), Products()],
+          //       ),
+          // ),
         ],
       ),
     );
@@ -225,25 +272,34 @@ class Products extends StatelessWidget {
 class Categories extends StatelessWidget {
   final String image;
   final String categoryName;
-  const Categories({Key? key, required this.categoryName, required this.image})
+  final void Function()? onTap;
+
+  const Categories(
+      {Key? key,
+      required this.categoryName,
+      required this.image,
+      required this.onTap})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.symmetric(horizontal: 15, vertical: 20),
-      alignment: Alignment.center,
-      height: 130,
-      width: 220,
-      decoration: BoxDecoration(
-        image: DecorationImage(image: NetworkImage(image), fit: BoxFit.cover),
-        // color: Colors.red,
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Text(
-        categoryName.toString(),
-        style: TextStyle(
-            color: Colors.white, fontSize: 30, fontWeight: FontWeight.bold),
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        margin: EdgeInsets.symmetric(horizontal: 15, vertical: 20),
+        alignment: Alignment.center,
+        height: 130,
+        width: 220,
+        decoration: BoxDecoration(
+          image: DecorationImage(image: NetworkImage(image), fit: BoxFit.cover),
+          // color: Colors.red,
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Text(
+          categoryName.toString(),
+          style: TextStyle(
+              color: Colors.white, fontSize: 30, fontWeight: FontWeight.bold),
+        ),
       ),
     );
   }
