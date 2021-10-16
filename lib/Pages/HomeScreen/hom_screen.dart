@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:fooddelivery/Pages/DetailScreen/detail_screen.dart';
 import 'package:fooddelivery/Routes/push.dart';
 import 'package:fooddelivery/Widgets/app_drawer.dart';
 import 'package:fooddelivery/Widgets/grid_view_widget.dart';
@@ -182,6 +183,18 @@ class HomeScreen extends StatelessWidget {
                         (index) {
                       var data = streamsnapshot.data!.docs[index];
                       return Products(
+                          onTap: () {
+                            RoutingPage.push(
+                                context: context,
+                                page: DetailScreen(
+                                  productId: data['productId'],
+                                  productName: data['productName'],
+                                  productPrice: data['productPrice'],
+                                  productImage: data['productImage'],
+                                  productOldPrice: data['productOldPrice'],
+                                  productRate: data['productRate'],
+                                ));
+                          },
                           price: data['productPrice'],
                           productImage: data['productImage'],
                           productName: data['productName']);
@@ -253,6 +266,99 @@ class HomeScreen extends StatelessWidget {
               "Best Sell",
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
             ),
+          ),
+          SizedBox(
+            height: 10,
+          ),
+          //Best sell below
+          StreamBuilder(
+            stream: FirebaseFirestore.instance
+                .collection("products")
+                .where("productRate", isGreaterThan: 4)
+                .orderBy("productRate")
+                .snapshots(),
+            builder: (context, AsyncSnapshot<QuerySnapshot> streamsnapshot) {
+              if (streamsnapshot.hasData) {
+                return SingleChildScrollView(
+                  physics: BouncingScrollPhysics(),
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    children: List.generate(streamsnapshot.data!.docs.length,
+                        (index) {
+                      var data = streamsnapshot.data!.docs[index];
+                      return Products(
+                          onTap: () {
+                            RoutingPage.push(
+                                context: context,
+                                page: DetailScreen(
+                                  productId: data['productId'],
+                                  productName: data['productName'],
+                                  productPrice: data['productPrice'],
+                                  productImage: data['productImage'],
+                                  productOldPrice: data['productOldPrice'],
+                                  productRate: data['productRate'],
+                                ));
+                          },
+                          price: data['productPrice'],
+                          productImage: data['productImage'],
+                          productName: data['productName']);
+                      // return Categories(
+                      //   categoryName: streamsnapshot.data!.docs[index]
+                      //       ['categoryName'],
+                      //   image: streamsnapshot.data!.docs[index]
+                      //       ['categoryImage'],
+                      //   onTap: () {
+                      //     RoutingPage.push(
+                      //         context: context,
+                      //         page: GridViewWidget(
+                      //           id: streamsnapshot.data!.docs[index].id,
+                      //           collection: streamsnapshot.data!.docs[index]
+                      //               ['categoryName'],
+                      //         ));
+                    }),
+                  ),
+                );
+              } else if (!streamsnapshot.hasData) {
+                return Text("No data found");
+              } else if (streamsnapshot.connectionState ==
+                  ConnectionState.waiting) {
+                return SizedBox(
+                  width: 200.0,
+                  height: 100.0,
+                  child: Shimmer.fromColors(
+                    baseColor: Colors.purple.shade300,
+                    highlightColor: Colors.purple,
+                    child: Text(
+                      'Shimmer',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 40.0,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                );
+              } else {
+                // return SizedBox(
+                //   width: 200.0,
+                //   height: 100.0,
+                //   child: Shimmer.fromColors(
+                //     baseColor: Colors.purple.shade300,
+                //     highlightColor: Colors.purple,
+                //     child: Text(
+                //       'Shimmer',
+                //       textAlign: TextAlign.center,
+                //       style: TextStyle(
+                //         fontSize: 40.0,
+                //         fontWeight: FontWeight.bold,
+                //       ),
+                //     ),
+                //   ),
+                // );
+
+                return CircularProgressIndicator();
+              }
+            },
           ),
           SizedBox(
             height: 100,

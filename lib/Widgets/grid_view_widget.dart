@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:fooddelivery/Pages/DetailScreen/detail_screen.dart';
 import 'package:fooddelivery/Routes/push.dart';
 import 'package:fooddelivery/Widgets/products.dart';
 
@@ -74,7 +75,20 @@ class GridViewWidget extends StatelessWidget {
                             crossAxisSpacing: 10,
                             mainAxisSpacing: 20),
                         itemBuilder: (context, index) {
+                          var data = snapshot.data!.docs[index];
                           return Products(
+                            onTap: () {
+                              RoutingPage.push(
+                                  context: context,
+                                  page: DetailScreen(
+                                    productId: data['productId'],
+                                    productName: data['productName'],
+                                    productPrice: data['productPrice'],
+                                    productImage: data['productImage'],
+                                    productOldPrice: data['productOldPrice'],
+                                    productRate: data['productRate'],
+                                  ));
+                            },
                             productImage: snapshot.data!.docs[index]
                                 ['productImage'],
                             price: snapshot.data!.docs[index]['productPrice'],
