@@ -187,6 +187,7 @@ class HomeScreen extends StatelessWidget {
                             RoutingPage.push(
                                 context: context,
                                 page: DetailScreen(
+                                  productCategory: data['productCategory'],
                                   productId: data['productId'],
                                   productName: data['productName'],
                                   productPrice: data['productPrice'],
@@ -291,6 +292,7 @@ class HomeScreen extends StatelessWidget {
                             RoutingPage.push(
                                 context: context,
                                 page: DetailScreen(
+                                  productCategory: data['productCategory'],
                                   productId: data['productId'],
                                   productName: data['productName'],
                                   productPrice: data['productPrice'],

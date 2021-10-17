@@ -10,6 +10,7 @@ class DetailScreen extends StatefulWidget {
   final String productName;
   final double productRate;
   final String productId;
+  final String productCategory;
 
   DetailScreen(
       {Key? key,
@@ -18,7 +19,8 @@ class DetailScreen extends StatefulWidget {
       required this.productPrice,
       required this.productName,
       required this.productRate,
-      required this.productId})
+      required this.productId,
+      required this.productCategory})
       : super(key: key);
   @override
   _DetailScreenState createState() => _DetailScreenState();
@@ -59,6 +61,7 @@ class _DetailScreenState extends State<DetailScreen> {
               productImage: widget.productImage,
             ),
             BottomPartForDetailScreen(
+              productCategory: widget.productCategory,
               productId: widget.productId,
               productImage: widget.productImage,
               productName: widget.productName,

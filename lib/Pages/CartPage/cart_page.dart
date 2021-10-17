@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:fooddelivery/Pages/CheckOut/check_out.dart';
 import 'package:fooddelivery/Routes/push.dart';
 import 'package:fooddelivery/Widgets/cart_item.dart';
 import 'package:fooddelivery/Widgets/mybutton.dart';
@@ -14,7 +15,11 @@ class CartPage extends StatelessWidget {
     return Scaffold(
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.symmetric(vertical: 10),
-        child: MyButton(onpressed: () {}, text: "checkout"),
+        child: MyButton(
+            onpressed: () {
+              RoutingPage.push(context: context, page: CheckOutScreen());
+            },
+            text: "checkout"),
       ),
       appBar: AppBar(
         elevation: 0.0,
@@ -47,32 +52,26 @@ class CartPage extends StatelessWidget {
             return SingleChildScrollView(
               physics: BouncingScrollPhysics(),
               scrollDirection: Axis.vertical,
-              child: Column(
-                children:
-                    List.generate(streamsnapshot.data!.docs.length, (index) {
-                  var data = streamsnapshot.data!.docs[index];
-                  return CartItem(
-                    productImage: data['productImage'],
-                    productName: data['productName'],
-                    productPrice: data['productPrice'],
-                    productQunatity: data['productQuantity'],
-                  );
-
-                  // return Categories(
-                  //   categoryName: streamsnapshot.data!.docs[index]
-                  //       ['categoryName'],
-                  //   image: streamsnapshot.data!.docs[index]
-                  //       ['categoryImage'],
-                  //   onTap: () {
-                  //     RoutingPage.push(
-                  //         context: context,
-                  //         page: GridViewWidget(
-                  //           id: streamsnapshot.data!.docs[index].id,
-                  //           collection: streamsnapshot.data!.docs[index]
-                  //               ['categoryName'],
-                  //         ));
-                }),
-              ),
+              child: streamsnapshot.data!.docs.isEmpty
+                  ? Container(
+                      height: MediaQuery.of(context).size.height * 0.89,
+                      child: Center(child: Text("No Items Found")))
+                  : Column(
+                      children: List.generate(
+                        streamsnapshot.data!.docs.length,
+                        (index) {
+                          var data = streamsnapshot.data!.docs[index];
+                          return CartItem(
+                            productId: data['productId'],
+                            productImage: data['productImage'],
+                            productName: data['productName'],
+                            productPrice: data['productPrice'],
+                            productQunatity: data['productQuantity'],
+                            productCategory: data['productCategory'],
+                          );
+                        },
+                      ),
+                    ),
             );
           } else if (!streamsnapshot.hasData) {
             return Text("No data found");

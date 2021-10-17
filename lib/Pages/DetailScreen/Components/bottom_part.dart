@@ -12,6 +12,7 @@ class BottomPartForDetailScreen extends StatelessWidget {
   final double productRate;
   final String productId;
   final String productImage;
+  final String productCategory;
 
   const BottomPartForDetailScreen(
       {Key? key,
@@ -20,7 +21,8 @@ class BottomPartForDetailScreen extends StatelessWidget {
       required this.productName,
       required this.productRate,
       required this.productId,
-      required this.productImage})
+      required this.productImage,
+      required this.productCategory})
       : super(key: key);
 
   @override
@@ -108,7 +110,8 @@ class BottomPartForDetailScreen extends StatelessWidget {
                 'productPrice': productPrice,
                 'productOldPrice': productOldPrice,
                 'productRate': productRate,
-                'productQuantity': 1
+                'productQuantity': 1,
+                'productCategory': productCategory
               });
               RoutingPage.push(context: context, page: CartPage());
             },
