@@ -4,6 +4,7 @@ import 'package:fooddelivery/Pages/LoginScreen/Components/login_auth_provider.da
 import 'package:fooddelivery/Pages/Profile/profile_auth_provider.dart';
 import 'package:fooddelivery/Pages/SignUp/Components/signup_auth_provider.dart';
 import 'package:fooddelivery/Pages/Welcome/welcome_page.dart';
+import 'package:fooddelivery/Provider/cart_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -28,6 +29,9 @@ class MyApp extends StatelessWidget {
         ),
         ChangeNotifierProvider(
           create: (context) => ProfileAuthProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => CartProvider(),
         )
       ],
       child: MaterialApp(

@@ -2,9 +2,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fooddelivery/Pages/CheckOut/check_out.dart';
+import 'package:fooddelivery/Provider/cart_provider.dart';
 import 'package:fooddelivery/Routes/push.dart';
 import 'package:fooddelivery/Widgets/cart_item.dart';
 import 'package:fooddelivery/Widgets/mybutton.dart';
+import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
 
 class CartPage extends StatelessWidget {
@@ -12,15 +14,19 @@ class CartPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    CartProvider cartProvider = Provider.of<CartProvider>(context);
+    cartProvider.getCartData();
     return Scaffold(
-      bottomNavigationBar: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 10),
-        child: MyButton(
-            onpressed: () {
-              RoutingPage.push(context: context, page: CheckOutScreen());
-            },
-            text: "checkout"),
-      ),
+      bottomNavigationBar: cartProvider.getCartList.isEmpty
+          ? Text("")
+          : Padding(
+              padding: const EdgeInsets.symmetric(vertical: 10),
+              child: MyButton(
+                  onpressed: () {
+                    RoutingPage.push(context: context, page: CheckOutScreen());
+                  },
+                  text: "checkout"),
+            ),
       appBar: AppBar(
         elevation: 0.0,
         backgroundColor: Colors.transparent,
@@ -41,80 +47,26 @@ class CartPage extends StatelessWidget {
         ),
         centerTitle: true,
       ),
-      body: StreamBuilder(
-        stream: FirebaseFirestore.instance
-            .collection("cart")
-            .doc(FirebaseAuth.instance.currentUser!.uid)
-            .collection("userCart")
-            .snapshots(),
-        builder: (context, AsyncSnapshot<QuerySnapshot> streamsnapshot) {
-          if (streamsnapshot.hasData) {
-            return SingleChildScrollView(
-              physics: BouncingScrollPhysics(),
-              scrollDirection: Axis.vertical,
-              child: streamsnapshot.data!.docs.isEmpty
-                  ? Container(
-                      height: MediaQuery.of(context).size.height * 0.89,
-                      child: Center(child: Text("No Items Found")))
-                  : Column(
-                      children: List.generate(
-                        streamsnapshot.data!.docs.length,
-                        (index) {
-                          var data = streamsnapshot.data!.docs[index];
-                          return CartItem(
-                            productId: data['productId'],
-                            productImage: data['productImage'],
-                            productName: data['productName'],
-                            productPrice: data['productPrice'],
-                            productQunatity: data['productQuantity'],
-                            productCategory: data['productCategory'],
-                          );
-                        },
-                      ),
-                    ),
-            );
-          } else if (!streamsnapshot.hasData) {
-            return Text("No data found");
-          } else if (streamsnapshot.connectionState ==
-              ConnectionState.waiting) {
-            return SizedBox(
-              width: 200.0,
-              height: 100.0,
-              child: Shimmer.fromColors(
-                baseColor: Colors.purple.shade300,
-                highlightColor: Colors.purple,
-                child: Text(
-                  'Shimmer',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 40.0,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+      body: cartProvider.getCartList.isEmpty
+          ? Center(
+              child: Text("No products Found"),
+            )
+          : Column(
+              children: List.generate(
+                cartProvider.getCartList.length,
+                (index) {
+                  var data = cartProvider.cartList[index];
+                  return CartItem(
+                    productId: data.productId,
+                    productImage: data.productImage,
+                    productName: data.productName,
+                    productPrice: data.productPrice,
+                    productQunatity: data.productQunatity,
+                    productCategory: data.productCategory,
+                  );
+                },
               ),
-            );
-          } else {
-            // return SizedBox(
-            //   width: 200.0,
-            //   height: 100.0,
-            //   child: Shimmer.fromColors(
-            //     baseColor: Colors.purple.shade300,
-            //     highlightColor: Colors.purple,
-            //     child: Text(
-            //       'Shimmer',
-            //       textAlign: TextAlign.center,
-            //       style: TextStyle(
-            //         fontSize: 40.0,
-            //         fontWeight: FontWeight.bold,
-            //       ),
-            //     ),
-            //   ),
-            // );
-
-            return CircularProgressIndicator();
-          }
-        },
-      ),
+            ),
     );
   }
 }
