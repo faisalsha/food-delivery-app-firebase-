@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:fooddelivery/Pages/FavouritPage/favourite_page.dart';
 import 'package:fooddelivery/Pages/HomeScreen/hom_screen.dart';
 import 'package:fooddelivery/Pages/LoginScreen/login_screen.dart';
 import 'package:fooddelivery/Pages/Profile/profile_screen.dart';
@@ -58,10 +59,11 @@ class AppDrawer extends StatelessWidget {
           ),
           ListTile(
             onTap: () {
-              // RoutingPage.goTonext(
-              //   context: context,
-              //   navigateTo: FavoritePage(),
-              // );
+              RoutingPage.pop(context: context);
+              RoutingPage.push(
+                context: context,
+                page: FavouriteScreen(),
+              );
             },
             leading: Icon(
               Icons.favorite,

@@ -7,8 +7,13 @@ import 'package:fooddelivery/Widgets/products.dart';
 class GridViewWidget extends StatelessWidget {
   final String? id;
   final String collection;
+  final String subCollection;
 
-  const GridViewWidget({Key? key, required this.id, required this.collection})
+  const GridViewWidget(
+      {Key? key,
+      required this.subCollection,
+      required this.id,
+      required this.collection})
       : super(key: key);
 
   @override
@@ -58,45 +63,63 @@ class GridViewWidget extends StatelessWidget {
               ),
             ),
           ),
-          FutureBuilder(
-              future: FirebaseFirestore.instance
-                  .collection("categories")
-                  .doc(id)
+          //alternative if we want to use future builder use .get() at the end refer below
+          // future:FirebaseFirestore.instance
+          // .collection(collection)
+          // .doc(id)
+          // .collection(subCollection)
+          // .get(),
+          StreamBuilder(
+              stream: FirebaseFirestore.instance
                   .collection(collection)
-                  .get(),
+                  .doc(id)
+                  .collection(subCollection)
+                  .snapshots(),
               builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
                 if (snapshot.hasData) {
                   return Expanded(
-                    child: GridView.builder(
-                        itemCount: snapshot.data!.docs.length,
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2,
-                            childAspectRatio: 0.63,
-                            crossAxisSpacing: 10,
-                            mainAxisSpacing: 20),
-                        itemBuilder: (context, index) {
-                          var data = snapshot.data!.docs[index];
-                          return Products(
-                            onTap: () {
-                              RoutingPage.push(
-                                  context: context,
-                                  page: DetailScreen(
-                                    productCategory: data['productCategory'],
-                                    productId: data['productId'],
-                                    productName: data['productName'],
-                                    productPrice: data['productPrice'],
-                                    productImage: data['productImage'],
-                                    productOldPrice: data['productOldPrice'],
-                                    productRate: data['productRate'],
-                                  ));
-                            },
-                            productImage: snapshot.data!.docs[index]
-                                ['productImage'],
-                            price: snapshot.data!.docs[index]['productPrice'],
-                            productName: snapshot.data!.docs[index]
-                                ['productName'],
-                          );
-                        }),
+                    child: snapshot.data!.docs.isEmpty
+                        ? Center(child: Text("No Items"))
+                        : GridView.builder(
+                            itemCount: snapshot.data!.docs.length,
+                            gridDelegate:
+                                SliverGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisCount: 2,
+                                    childAspectRatio: 0.63,
+                                    crossAxisSpacing: 10,
+                                    mainAxisSpacing: 20),
+                            itemBuilder: (context, index) {
+                              var data = snapshot.data!.docs[index];
+                              return Products(
+                                onTap: () {
+                                  RoutingPage.push(
+                                      context: context,
+                                      page: DetailScreen(
+                                        productCategory:
+                                            data['productCategory'],
+                                        productId: data['productId'],
+                                        productName: data['productName'],
+                                        productPrice: data['productPrice'],
+                                        productImage: data['productImage'],
+                                        productOldPrice:
+                                            data['productOldPrice'],
+                                        productRate: data['productRate'],
+                                      ));
+                                },
+                                productOldPrice: data['productOldPrice'],
+                                productRate: data['productRate'],
+                                productId: data['productId'],
+                                productImage: data['productImage'],
+                                productName: data['productName'],
+                                productPrice: data['productPrice'],
+                                productCategory: data['productCategory'],
+                                // productImage: snapshot.data!.docs[index]
+                                //     ['productImage'],
+                                // price: snapshot.data!.docs[index]['productPrice'],
+                                // productName: snapshot.data!.docs[index]
+                                //     ['productName'],
+                              );
+                            }),
                   );
                 } else {
                   return Center(child: CircularProgressIndicator());
