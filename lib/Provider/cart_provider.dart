@@ -33,6 +33,21 @@ class CartProvider extends ChangeNotifier {
     return subTotal;
   }
 
+  deleteCart() async {
+    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+        .collection("cart")
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .collection("userCart")
+        .get();
+
+    querySnapshot.docs.forEach((element) {
+      element.reference.delete();
+      notifyListeners();
+    });
+
+    notifyListeners();
+  }
+
   List<CartModel> get getCartList {
     return cartList;
   }

@@ -1,12 +1,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:fooddelivery/Pages/HomeScreen/hom_screen.dart';
 import 'package:fooddelivery/Provider/cart_provider.dart';
 import 'package:fooddelivery/Routes/push.dart';
 import 'package:fooddelivery/Widgets/cart_item.dart';
 import 'package:fooddelivery/Widgets/mybutton.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:razorpay_flutter/razorpay_flutter.dart';
 
 class CheckOutScreen extends StatefulWidget {
   const CheckOutScreen({Key? key}) : super(key: key);
@@ -16,16 +19,71 @@ class CheckOutScreen extends StatefulWidget {
 }
 
 class _CheckOutScreenState extends State<CheckOutScreen> {
+  late Razorpay _razorpay;
+  double grandTotal = 0.0;
+
+  @override
+  void initState() {
+    super.initState();
+    _razorpay = Razorpay();
+    _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
+    _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
+    _razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleExternalWallet);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _razorpay.clear();
+  }
+
+  Future openCheckout() async {
+    var options = {
+      'key': 'rzp_test_1DP5mmOlF5G5ag',
+      'amount': grandTotal.ceil() * 100,
+      'name': 'Acme Corp.',
+      'description': 'Fine T-Shirt',
+      'prefill': {'contact': '8888888888', 'email': 'test@razorpay.com'},
+      'external': {
+        'wallets': ['paytm']
+      }
+    };
+
+    try {
+      _razorpay.open(options);
+    } catch (e) {
+      debugPrint('Error: e');
+    }
+  }
+
+  void _handlePaymentSuccess(PaymentSuccessResponse response) {
+    Fluttertoast.showToast(
+        msg: "SUCCESS: " + response.paymentId!,
+        toastLength: Toast.LENGTH_SHORT);
+  }
+
+  void _handlePaymentError(PaymentFailureResponse response) {
+    Fluttertoast.showToast(
+        msg: "ERROR: " + response.code.toString() + " - " + response.message!,
+        toastLength: Toast.LENGTH_SHORT);
+  }
+
+  void _handleExternalWallet(ExternalWalletResponse response) {
+    Fluttertoast.showToast(
+        msg: "EXTERNAL_WALLET: " + response.walletName!,
+        toastLength: Toast.LENGTH_SHORT);
+  }
+
   @override
   Widget build(BuildContext context) {
     CartProvider cartProvider = Provider.of<CartProvider>(context);
     cartProvider.getCartData();
     var subTotal = cartProvider.subTotal();
-    var discount = 5;
-    var shipping = 10;
+    var discount = 7;
+    var shipping = 5;
     var discountValue = (subTotal * discount) / 100;
     var priceAfterDiscount = subTotal - discountValue;
-    var grandTotal = priceAfterDiscount + shipping;
+    grandTotal = priceAfterDiscount + shipping;
     if (cartProvider.getCartList.isEmpty) {
       setState(() {
         grandTotal = 0.0;
@@ -40,7 +98,13 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
               padding: const EdgeInsets.symmetric(vertical: 10),
               child: MyButton(
                   onpressed: () {
-                    RoutingPage.push(context: context, page: CheckOutScreen());
+                    //razorpay
+
+                    openCheckout().whenComplete(() {
+                      cartProvider.deleteCart();
+                      RoutingPage.pushReplacement(
+                          context: context, page: HomeScreen());
+                    });
                   },
                   text: "Proceed"),
             ),
