@@ -23,7 +23,7 @@ class GridViewWidget extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          collection,
+          subCollection,
           style: TextStyle(color: Colors.black),
         ),
         centerTitle: true,
@@ -44,25 +44,25 @@ class GridViewWidget extends StatelessWidget {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Material(
-              // shape:CircularProgressIndicator()
-              shadowColor: Colors.grey[300],
-              elevation: 10.0,
-              child: TextFormField(
-                decoration: InputDecoration(
-                    fillColor: Colors.white,
-                    filled: true,
-                    prefixIcon: Icon(
-                      Icons.search,
-                      color: Colors.black,
-                    ),
-                    hintText: "Search Products",
-                    border: OutlineInputBorder(borderSide: BorderSide.none)),
-              ),
-            ),
-          ),
+          // Padding(
+          //   padding: const EdgeInsets.all(8.0),
+          //   child: Material(
+          //     // shape:CircularProgressIndicator()
+          //     shadowColor: Colors.grey[300],
+          //     elevation: 10.0,
+          //     child: TextFormField(
+          //       decoration: InputDecoration(
+          //           fillColor: Colors.white,
+          //           filled: true,
+          //           prefixIcon: Icon(
+          //             Icons.search,
+          //             color: Colors.black,
+          //           ),
+          //           hintText: "Search Products",
+          //           border: OutlineInputBorder(borderSide: BorderSide.none)),
+          //     ),
+          //   ),
+          // ),
           //alternative if we want to use future builder use .get() at the end refer below
           // future:FirebaseFirestore.instance
           // .collection(collection)

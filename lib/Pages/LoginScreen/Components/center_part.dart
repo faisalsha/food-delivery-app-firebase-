@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:fooddelivery/Pages/ForgotPassword/forgot_password.dart';
+import 'package:fooddelivery/Routes/push.dart';
 
 class CenterPartForLogin extends StatelessWidget {
   final TextEditingController? email;
@@ -28,6 +30,16 @@ class CenterPartForLogin extends StatelessWidget {
           obscureText: obscuretext,
           controller: password,
           decoration: InputDecoration(
+            counter: GestureDetector(
+              onTap: () {
+                RoutingPage.push(
+                    context: context, page: ForgotPasswordScreen());
+              },
+              child: Text(
+                "Forgot Password ?",
+                style: TextStyle(color: Colors.red, fontSize: 16),
+              ),
+            ),
             hintText: "Enter Password",
             suffixIcon: IconButton(
               onPressed: onPressed,

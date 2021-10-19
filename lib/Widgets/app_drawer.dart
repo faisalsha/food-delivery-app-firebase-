@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:fooddelivery/Pages/CartPage/cart_page.dart';
 import 'package:fooddelivery/Pages/FavouritPage/favourite_page.dart';
 import 'package:fooddelivery/Pages/HomeScreen/hom_screen.dart';
 import 'package:fooddelivery/Pages/LoginScreen/login_screen.dart';
@@ -47,10 +48,8 @@ class AppDrawer extends StatelessWidget {
           ),
           ListTile(
             onTap: () {
-              // RoutingPage.goTonext(
-              //   context: context,
-              //   navigateTo: CartPage(),
-              // );
+              Navigator.pop(context);
+              RoutingPage.push(context: context, page: CartPage());
             },
             leading: Icon(
               Icons.shopping_cart_rounded,

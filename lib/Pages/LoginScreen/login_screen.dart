@@ -19,6 +19,13 @@ class _LoginScreenState extends State<LoginScreen> {
   bool isLoading = false;
 
   @override
+  void dispose() {
+    super.dispose();
+    Email.dispose();
+    Password.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     LoginProvider loginAuthProvider = Provider.of<LoginProvider>(context);
     return Scaffold(
