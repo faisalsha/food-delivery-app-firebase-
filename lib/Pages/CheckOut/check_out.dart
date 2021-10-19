@@ -8,13 +8,31 @@ import 'package:fooddelivery/Widgets/mybutton.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
 
-class CheckOutScreen extends StatelessWidget {
+class CheckOutScreen extends StatefulWidget {
   const CheckOutScreen({Key? key}) : super(key: key);
 
+  @override
+  _CheckOutScreenState createState() => _CheckOutScreenState();
+}
+
+class _CheckOutScreenState extends State<CheckOutScreen> {
   @override
   Widget build(BuildContext context) {
     CartProvider cartProvider = Provider.of<CartProvider>(context);
     cartProvider.getCartData();
+    var subTotal = cartProvider.subTotal();
+    var discount = 5;
+    var shipping = 10;
+    var discountValue = (subTotal * discount) / 100;
+    var priceAfterDiscount = subTotal - discountValue;
+    var grandTotal = priceAfterDiscount + shipping;
+    if (cartProvider.getCartList.isEmpty) {
+      setState(() {
+        grandTotal = 0.0;
+      });
+    }
+
+    print(subTotal);
     return Scaffold(
       bottomNavigationBar: cartProvider.getCartList.isEmpty
           ? Text("")
@@ -71,15 +89,15 @@ class CheckOutScreen extends StatelessWidget {
             children: [
               ListTile(
                 leading: Text("SubTotal"),
-                trailing: Text("Rs 250"),
+                trailing: Text("Rs ${subTotal.toStringAsFixed(2)}"),
               ),
               ListTile(
                 leading: Text("Discount"),
-                trailing: Text("Rs 50"),
+                trailing: Text("$discount %"),
               ),
               ListTile(
                 leading: Text("Shipping"),
-                trailing: Text("Rs 20"),
+                trailing: Text("Rs $shipping"),
               ),
               Divider(
                 thickness: 2,
@@ -90,7 +108,7 @@ class CheckOutScreen extends StatelessWidget {
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 19),
                 ),
                 trailing: Text(
-                  "Rs 220",
+                  "Rs ${grandTotal.toStringAsFixed(2)}",
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                 ),
               ),

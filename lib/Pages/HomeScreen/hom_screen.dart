@@ -106,7 +106,8 @@ class HomeScreen extends StatelessWidget {
                               context: context,
                               page: GridViewWidget(
                                 id: streamsnapshot.data!.docs[index].id,
-                                collection: streamsnapshot.data!.docs[index]
+                                collection: "categories",
+                                subCollection: streamsnapshot.data!.docs[index]
                                     ['categoryName'],
                               ));
                         },
@@ -183,22 +184,30 @@ class HomeScreen extends StatelessWidget {
                         (index) {
                       var data = streamsnapshot.data!.docs[index];
                       return Products(
-                          onTap: () {
-                            RoutingPage.push(
-                                context: context,
-                                page: DetailScreen(
-                                  productCategory: data['productCategory'],
-                                  productId: data['productId'],
-                                  productName: data['productName'],
-                                  productPrice: data['productPrice'],
-                                  productImage: data['productImage'],
-                                  productOldPrice: data['productOldPrice'],
-                                  productRate: data['productRate'],
-                                ));
-                          },
-                          price: data['productPrice'],
-                          productImage: data['productImage'],
-                          productName: data['productName']);
+                        onTap: () {
+                          RoutingPage.push(
+                              context: context,
+                              page: DetailScreen(
+                                productCategory: data['productCategory'],
+                                productId: data['productId'],
+                                productName: data['productName'],
+                                productPrice: data['productPrice'],
+                                productImage: data['productImage'],
+                                productOldPrice: data['productOldPrice'],
+                                productRate: data['productRate'],
+                              ));
+                        },
+                        productOldPrice: data['productOldPrice'],
+                        productRate: data['productRate'],
+                        productId: data['productId'],
+                        productImage: data['productImage'],
+                        productName: data['productName'],
+                        productPrice: data['productPrice'],
+                        productCategory: data['productCategory'],
+                        // price: data['productPrice'],
+                        // productImage: data['productImage'],
+                        // productName: data['productName']
+                      );
                       // return Categories(
                       //   categoryName: streamsnapshot.data!.docs[index]
                       //       ['categoryName'],
@@ -288,22 +297,30 @@ class HomeScreen extends StatelessWidget {
                         (index) {
                       var data = streamsnapshot.data!.docs[index];
                       return Products(
-                          onTap: () {
-                            RoutingPage.push(
-                                context: context,
-                                page: DetailScreen(
-                                  productCategory: data['productCategory'],
-                                  productId: data['productId'],
-                                  productName: data['productName'],
-                                  productPrice: data['productPrice'],
-                                  productImage: data['productImage'],
-                                  productOldPrice: data['productOldPrice'],
-                                  productRate: data['productRate'],
-                                ));
-                          },
-                          price: data['productPrice'],
-                          productImage: data['productImage'],
-                          productName: data['productName']);
+                        onTap: () {
+                          RoutingPage.push(
+                              context: context,
+                              page: DetailScreen(
+                                productCategory: data['productCategory'],
+                                productId: data['productId'],
+                                productName: data['productName'],
+                                productPrice: data['productPrice'],
+                                productImage: data['productImage'],
+                                productOldPrice: data['productOldPrice'],
+                                productRate: data['productRate'],
+                              ));
+                        },
+                        productOldPrice: data['productOldPrice'],
+                        productRate: data['productRate'],
+                        productId: data['productId'],
+                        productImage: data['productImage'],
+                        productName: data['productName'],
+                        productPrice: data['productPrice'],
+                        productCategory: data['productCategory'],
+                        // price: data['productPrice'],
+                        // productImage: data['productImage'],
+                        // productName: data['productName']
+                      );
                       // return Categories(
                       //   categoryName: streamsnapshot.data!.docs[index]
                       //       ['categoryName'],

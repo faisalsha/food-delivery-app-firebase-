@@ -9,7 +9,7 @@ class CartProvider extends ChangeNotifier {
 
   Future getCartData() async {
     List<CartModel> newCartList = [];
-
+    //acts like a stream
     QuerySnapshot querySnapshot = await FirebaseFirestore.instance
         .collection("cart")
         .doc(FirebaseAuth.instance.currentUser!.uid)
@@ -23,6 +23,14 @@ class CartProvider extends ChangeNotifier {
     });
     cartList = newCartList;
     notifyListeners();
+  }
+
+  double subTotal() {
+    double subTotal = 0.0;
+    cartList.forEach((element) {
+      subTotal = subTotal + element.productPrice * element.productQunatity;
+    });
+    return subTotal;
   }
 
   List<CartModel> get getCartList {
